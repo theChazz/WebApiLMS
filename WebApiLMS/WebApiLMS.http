@@ -1,0 +1,6 @@
+@WebApiLMS_HostAddress = http://localhost:7020
+
+GET {{WebApiLMS_HostAddress}}/api/user/GetUser/1
+Accept: application/json
+
+###

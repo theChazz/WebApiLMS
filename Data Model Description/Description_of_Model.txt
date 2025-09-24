@@ -1,0 +1,9 @@
+Model Name	Purpose
+
+UserModel	Represents a user (student, lecturer, admin) ✓ 
+ProgramModel	Represents a degree program (e.g., IT, Education, Humanities) ✓ 
+CourseModel	Represents an individual course ✓ 
+ProgramCourseModel	Links programs to courses (many-to-many) ✓ 
+UserProgramEnrollmentModel	Enrolls users into specific programs ✓ 
+CourseStudentEnrollments	Tracks which students are enrolled in which courses
+CourseLecturerAssignment	Assigns lecturers to specific courses
