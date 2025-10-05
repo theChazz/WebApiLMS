@@ -1,0 +1,46 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore ./WebApiLMS/WebApiLMS.csproj
+
+    - name: Build
+      run: dotnet build ./WebApiLMS/WebApiLMS.csproj --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test ./WebApiLMS/WebApiLMS.csproj --configuration Release --no-build --verbosity normal
+
+    - name: Publish
+      run: dotnet publish ./WebApiLMS/WebApiLMS.csproj --configuration Release --output ./publish --no-build
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: 'webapilms-chazz'
+        slot-name: 'production'
+        package: ./publish
