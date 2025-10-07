@@ -66,3 +66,8 @@ desktop.ini
 ## Publish outputs
 .publish/
 .publish_output/
+publish/
+WebApiLMS/publish/
+
+## Deployment summary
+Deployment_Summary.md

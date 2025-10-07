@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiLMS.Data;
 
@@ -11,9 +12,11 @@ using WebApiLMS.Data;
 namespace WebApiLMS.Migrations
 {
     [DbContext(typeof(WebApiLMSDbContext))]
-    partial class WebApiLMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251005172149_AddAssessmentSystem")]
+    partial class AddAssessmentSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,12 +55,10 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("MarksAwarded")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("MaxMarks")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
@@ -106,8 +107,7 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Points")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
@@ -120,8 +120,7 @@ namespace WebApiLMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId", "SortOrder")
-                        .IsUnique();
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("AnswerOptions");
                 });
@@ -501,8 +500,7 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("GradePoints")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("GradingScaleId")
                         .HasColumnType("int");
@@ -514,12 +512,10 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("MaxPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("MinPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
@@ -529,10 +525,9 @@ namespace WebApiLMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GradingScaleModelId");
+                    b.HasIndex("GradingScaleId");
 
-                    b.HasIndex("GradingScaleId", "SortOrder")
-                        .IsUnique();
+                    b.HasIndex("GradingScaleModelId");
 
                     b.ToTable("GradeBoundaries");
                 });
@@ -561,8 +556,7 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("GradePoints")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("GradedAt")
                         .HasColumnType("datetime2");
@@ -586,22 +580,19 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("LatePenalty")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("LetterGrade")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("MaxScore")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Percentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("PreviousGradeId")
                         .HasColumnType("int");
@@ -610,8 +601,7 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Score")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
@@ -824,12 +814,11 @@ namespace WebApiLMS.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssessmentId");
+
                     b.HasIndex("QuestionTypeId");
 
                     b.HasIndex("QuestionTypeModelId");
-
-                    b.HasIndex("AssessmentId", "SortOrder")
-                        .IsUnique();
 
                     b.ToTable("Questions");
                 });
@@ -889,8 +878,7 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("MaxScore")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -908,15 +896,13 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Weight")
-                        .HasPrecision(5, 4)
-                        .HasColumnType("decimal(5,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RubricModelId");
+                    b.HasIndex("RubricId");
 
-                    b.HasIndex("RubricId", "SortOrder")
-                        .IsUnique();
+                    b.HasIndex("RubricModelId");
 
                     b.ToTable("RubricCriteria");
                 });
@@ -945,8 +931,7 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Score")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
@@ -984,8 +969,7 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("MaxScore")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -1065,12 +1049,10 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("MaxMarks")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Percentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("StartedAt")
                         .HasColumnType("datetime2");
@@ -1091,18 +1073,16 @@ namespace WebApiLMS.Migrations
                         .HasColumnType("time");
 
                     b.Property<decimal?>("TotalMarks")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("AssessmentId");
 
-                    b.HasIndex("AssessmentId", "StudentId", "AttemptNumber")
-                        .IsUnique();
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Submissions");
                 });

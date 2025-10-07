@@ -24,6 +24,14 @@ builder.Services.AddScoped<ProgramTypeService>();
 builder.Services.AddScoped<CourseStudentEnrollmentService>();
 builder.Services.AddScoped<CourseLecturerAssignmentService>();
 builder.Services.AddScoped<CourseResourceService>();
+builder.Services.AddScoped<AssessmentService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<ISubmissionService, SubmissionService>();
+builder.Services.AddScoped<IGradingService, GradingService>();
+builder.Services.AddScoped<IRubricService, RubricService>();
+
+// Register missing UserCredential service DI
+builder.Services.AddScoped<IUserCredentialService, UserCredentialService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -42,7 +50,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// No seeding; data will be populated via SQL scripts
+// Run migrations and seed data
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<WebApiLMSDbContext>();
+    db.Database.Migrate();
+    
+    // Seed dummy data
+    await DataSeeder.SeedAsync(db);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

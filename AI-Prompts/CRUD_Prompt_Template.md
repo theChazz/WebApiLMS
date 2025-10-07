@@ -138,7 +138,7 @@ public async Task<ActionResult<List<[EntityName]Dto>>> GetAll()
     var entities = await _service.GetAllAsync();
     var dtos = entities.Select(e => new [EntityName]Dto
     {
-        Id = e.Id,
+      Id = e.Id, // For internal linking/routing only. UI MUST NOT display raw IDs.
         // Map basic properties
         RelatedEntityName = e.RelatedEntity?.Name ?? "N/A", // Include navigation names
         // ... other properties
@@ -187,6 +187,8 @@ public async Task<ActionResult<[EntityName]Dto>> Create([FromBody] Create[Entity
 5. ✅ **No filtering parameters** in GetAll() - return ALL entities (follows CourseResource pattern)
 6. ✅ **Separate interface and implementation** files for all services
 7. ✅ **Register concrete service classes** (not interfaces) in Program.cs
+8. ✅ **Do NOT show IDs in the UI** — display human-friendly names only. Keep Id/foreign keys for internal routing and as hidden form fields.
+9. ✅ **Server-set fields** (e.g., EnrolledAt/CreatedAt) are set on create and not updatable in Update requests
 
 ---
 

@@ -30,7 +30,11 @@ namespace WebApiLMS.Services
 
         public async Task<UserProgramEnrollmentModel> GetEnrollmentByIdAsync(int id)
         {
-            return await _context.UserProgramEnrollments.FindAsync(id);
+            // Include navigation properties so callers (DTO mapping/UI) can access names
+            return await _context.UserProgramEnrollments
+                .Include(e => e.User)
+                .Include(e => e.Program)
+                .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<UserProgramEnrollmentModel> AddEnrollmentAsync(UserProgramEnrollmentModel enrollment)

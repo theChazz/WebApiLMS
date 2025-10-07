@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApiLMS.Models;
 using WebApiLMS.Services;
+using WebApiLMS.DTOs.SetaBody;
 
 namespace WebApiLMS.Controllers
 {
@@ -15,40 +16,101 @@ namespace WebApiLMS.Controllers
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<List<SetaBodyModel>>> GetAll()
+		public async Task<IActionResult> GetAll()
 		{
-			return Ok(await _service.GetAllAsync());
+			try
+			{
+				var items = await _service.GetAllAsync();
+				return Ok(items);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "An error occurred while fetching SETA bodies");
+			}
 		}
 
 		[HttpGet("{id}")]
-		public async Task<ActionResult<SetaBodyModel>> GetById(int id)
+		public async Task<IActionResult> GetById(int id)
 		{
-			var item = await _service.GetByIdAsync(id);
-			if (item == null) return NotFound();
-			return Ok(item);
+			try
+			{
+				var item = await _service.GetByIdAsync(id);
+				if (item == null)
+				{
+					return NotFound("SETA body not found");
+				}
+				return Ok(item);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "An error occurred while fetching the SETA body");
+			}
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<SetaBodyModel>> Create([FromBody] SetaBodyModel request)
+		public async Task<IActionResult> Create([FromBody] CreateSetaBodyRequest request)
 		{
-			var created = await _service.CreateAsync(request);
-			return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return ValidationProblem(ModelState);
+				}
+
+				var model = new SetaBodyModel
+				{
+					Code = request.Code,
+					Name = request.Name
+				};
+
+				var created = await _service.CreateAsync(model);
+				return Ok(new { Id = created.Id, Message = "SETA body created successfully" });
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "An error occurred while creating the SETA body");
+			}
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Update(int id, [FromBody] SetaBodyModel request)
+		public async Task<IActionResult> Update(int id, [FromBody] UpdateSetaBodyRequest request)
 		{
-			var ok = await _service.UpdateAsync(id, request);
-			if (!ok) return NotFound();
-			return NoContent();
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return ValidationProblem(ModelState);
+				}
+
+				var model = new SetaBodyModel
+				{
+					Code = request.Code,
+					Name = request.Name
+				};
+
+				var ok = await _service.UpdateAsync(id, model);
+				if (!ok) return NotFound("SETA body not found");
+				return Ok(new { Message = "SETA body updated successfully" });
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "An error occurred while updating the SETA body");
+			}
 		}
 
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var ok = await _service.DeleteAsync(id);
-			if (!ok) return NotFound();
-			return NoContent();
+			try
+			{
+				var ok = await _service.DeleteAsync(id);
+				if (!ok) return NotFound("SETA body not found");
+				return Ok(new { Message = "SETA body deleted successfully" });
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "An error occurred while deleting the SETA body");
+			}
 		}
 	}
 }

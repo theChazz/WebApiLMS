@@ -29,16 +29,44 @@ namespace WebApiLMS.Controllers
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<UserCredentialModel>> Create([FromBody] UserCredentialModel request)
+		public async Task<ActionResult<UserCredentialModel>> Create([FromBody] DTOs.UserCredential.CreateUserCredentialRequest request)
 		{
-			var created = await _service.CreateAsync(request);
+			// Map DTO to model
+			var model = new UserCredentialModel
+			{
+				UserId = request.UserId,
+				CredentialType = request.CredentialType,
+				RegistrationNumber = request.RegistrationNumber,
+				SetaBodyId = request.SetaBodyId,
+				Scope = request.Scope,
+				ValidFrom = request.ValidFrom,
+				ValidTo = request.ValidTo,
+				Status = request.Status,
+				EvidenceUrl = request.EvidenceUrl
+			};
+
+			var created = await _service.CreateAsync(model);
 			return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Update(int id, [FromBody] UserCredentialModel request)
+		public async Task<IActionResult> Update(int id, [FromBody] DTOs.UserCredential.UpdateUserCredentialRequest request)
 		{
-			var ok = await _service.UpdateAsync(id, request);
+			// Map DTO to model to avoid binding navigation properties and validation errors
+			var model = new UserCredentialModel
+			{
+				UserId = request.UserId,
+				CredentialType = request.CredentialType,
+				RegistrationNumber = request.RegistrationNumber,
+				SetaBodyId = request.SetaBodyId,
+				Scope = request.Scope,
+				ValidFrom = request.ValidFrom,
+				ValidTo = request.ValidTo,
+				Status = request.Status,
+				EvidenceUrl = request.EvidenceUrl
+			};
+
+			var ok = await _service.UpdateAsync(id, model);
 			if (!ok) return NotFound();
 			return NoContent();
 		}

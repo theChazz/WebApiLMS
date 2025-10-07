@@ -36,7 +36,7 @@ namespace WebApiLMS.Controllers
                         Id = user.Id,
                         FullName = user.FullName,
                         Email = user.Email,
-                        Role = user.UserRoleId.ToString(),
+                        Role = user.UserRole?.Name ?? user.UserRoleId.ToString(),
                         AccountStatus = user.AccountStatus,
                         CreatedAt = user.CreatedAt,
                         UpdatedAt = user.UpdatedAt
@@ -69,7 +69,7 @@ namespace WebApiLMS.Controllers
                         Id = user.Id,
                         FullName = user.FullName,
                         Email = user.Email,
-                        Role = user.UserRoleId.ToString(),
+                        Role = user.UserRole?.Name ?? user.UserRoleId.ToString(),
                         AccountStatus = user.AccountStatus,
                         CreatedAt = user.CreatedAt,
                         UpdatedAt = user.UpdatedAt
@@ -102,7 +102,7 @@ namespace WebApiLMS.Controllers
                     Id = user.Id,
                     FullName = user.FullName,
                     Email = user.Email,
-                    Role = user.UserRoleId.ToString(),
+                    Role = user.UserRole?.Name ?? user.UserRoleId.ToString(),
                     AccountStatus = user.AccountStatus,
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt
@@ -170,7 +170,7 @@ namespace WebApiLMS.Controllers
                     Id = user.Id,
                     FullName = user.FullName,
                     Email = user.Email,
-                    Role = user.UserRoleId.ToString(),
+                    Role = user.UserRole?.Name ?? user.UserRoleId.ToString(),
                     AccountStatus = user.AccountStatus,
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt

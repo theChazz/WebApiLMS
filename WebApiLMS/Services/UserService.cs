@@ -15,7 +15,28 @@ namespace WebApiLMS.Services
 
         private async Task<int> MapRoleToId(string role)
         {
-            var roleEntity = await _context.UserRoles.FirstOrDefaultAsync(r => r.Code == role);
+            if (string.IsNullOrWhiteSpace(role))
+                throw new ArgumentException("Role is required.");
+
+            // If a numeric string is provided, treat as Role Id first
+            if (int.TryParse(role, out var parsedId))
+            {
+                var byId = await _context.UserRoles.FirstOrDefaultAsync(r => r.Id == parsedId);
+                if (byId != null) return byId.Id;
+            }
+
+            // Otherwise match by Code (preferred) or Name (fallback), case-insensitive
+            var normalized = role.Trim();
+            var roleEntity = await _context.UserRoles
+                .FirstOrDefaultAsync(r => r.Code == normalized || r.Name == normalized);
+
+            if (roleEntity == null)
+            {
+                // Try case-insensitive match
+                roleEntity = await _context.UserRoles
+                    .FirstOrDefaultAsync(r => r.Code.ToLower() == normalized.ToLower() || r.Name.ToLower() == normalized.ToLower());
+            }
+
             if (roleEntity == null)
             {
                 throw new Exception($"Unknown role: {role}");
@@ -23,7 +44,7 @@ namespace WebApiLMS.Services
             return roleEntity.Id;
         }
 
-        public async Task<Users> RegisterUser(string fullName, string email, string password, string role)
+    public async Task<Users> RegisterUser(string fullName, string email, string password, string role)
         {
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (existingUser != null)
@@ -44,12 +65,17 @@ namespace WebApiLMS.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            // Ensure role navigation property is available for callers
+            await _context.Entry(user).Reference(u => u.UserRole).LoadAsync();
+
             return user;
         }
 
         public async Task<Users> LoginUser(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users
+                .Include(u => u.UserRole)
+                .FirstOrDefaultAsync(u => u.Email == email);
             if (user == null || !Users.VerifyPassword(password, user.PasswordHash))
             {
                 throw new Exception("Invalid email or password");
@@ -60,7 +86,9 @@ namespace WebApiLMS.Services
 
         public async Task<Users> GetUserById(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users
+                .Include(u => u.UserRole)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<bool> UpdateUser(int id, string fullName, string email, string role, string accountStatus)
@@ -96,7 +124,9 @@ namespace WebApiLMS.Services
 
         public async Task<IEnumerable<Users>> GetAllUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users
+                .Include(u => u.UserRole)
+                .ToListAsync();
         }
 
         public async Task<bool> UpdateUserStatus(int id, string accountStatus)
